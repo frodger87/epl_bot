@@ -1,7 +1,7 @@
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler
 
-from projects.epl_football_bot import settings
+import settings
 
 
 async def greet_user(update: Update, context):
