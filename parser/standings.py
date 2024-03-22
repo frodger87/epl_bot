@@ -1,6 +1,8 @@
-import requests
 import json
-from epl_bot import settings
+
+import requests
+
+from projects.epl_bot import settings
 
 
 def get_league_standings(league, season):
@@ -9,7 +11,7 @@ def get_league_standings(league, season):
 
     headers = {
         'x-rapidapi-host': "v3.football.api-sports.io",
-        'x-rapidapi-key': settings.API_KEY
+        'x-rapidapi-key': settings.API_KEY_PARSER
     }
 
     response = requests.request("GET", url, headers=headers, params=parameters)
@@ -33,7 +35,12 @@ def get_league_standings(league, season):
     return league_table
 
 
-league_id = 39
-season_year = 2023
-teams_data = get_league_standings(league_id, season_year)
-print(json.dumps(teams_data, indent=4))
+def main():
+    league_id = 39
+    season_year = 2023
+    teams_data = get_league_standings(league_id, season_year)
+    print(json.dumps(teams_data, indent=4))
+
+
+if __name__ == '__main__':
+    main()
