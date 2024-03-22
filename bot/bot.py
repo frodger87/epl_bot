@@ -4,7 +4,7 @@ from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, \
     filters
 
-import settings
+from projects.epl_bot import settings
 
 FORMAT = '%(asctime)s %(levelname)s %(message)s'
 logging.basicConfig(filename='bot.log', level=logging.INFO, format=FORMAT)
@@ -24,7 +24,7 @@ async def send_point_table(update: Update, context):
 
 
 def main():
-    application = ApplicationBuilder().token(settings.API_KEY).build()
+    application = ApplicationBuilder().token(settings.BOT_API_KEY).build()
     start_handler = CommandHandler('start', greet_user)
     application.add_handler(start_handler)
     application.add_handler(
