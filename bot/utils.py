@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-import settings
+from projects.epl_bot import settings
 
 
 def transform_table(raw_table: dict) -> dict:
@@ -9,6 +9,8 @@ def transform_table(raw_table: dict) -> dict:
     teams_lst = [v['name'] for k, v in raw_table.items()]
     played_lst = [v['played'] for k, v in raw_table.items()]
     win_lst = [v['win'] for k, v in raw_table.items()]
+    draw_lst = [v['draw'] for k, v in raw_table.items()]
+    lose_lst = [v['lose'] for k, v in raw_table.items()]
     goals_for_lst = [v['goals for'] for k, v in raw_table.items()]
     goals_against_lst = [v['goals against'] for k, v in raw_table.items()]
     points_lst = [v['points'] for k, v in raw_table.items()]
@@ -17,6 +19,8 @@ def transform_table(raw_table: dict) -> dict:
     data_transformed['teams'] = teams_lst[::-1]
     data_transformed['played'] = played_lst[::-1]
     data_transformed['win'] = win_lst[::-1]
+    data_transformed['draw'] = draw_lst[::-1]
+    data_transformed['lose'] = lose_lst[::-1]
     data_transformed['goals for'] = goals_for_lst[::-1]
     data_transformed['goals against'] = goals_against_lst[::-1]
     data_transformed['points'] = points_lst[::-1]
@@ -58,16 +62,26 @@ def create_table_png(data: dict):
         )
         ax.annotate(
             xy=(3.0, y),
-            text=data['goals for'][y],
+            text=data['draw'][y],
             ha='center'
         )
         ax.annotate(
             xy=(3.5, y),
-            text=data['goals against'][y],
+            text=data['lose'][y],
             ha='center'
         )
         ax.annotate(
             xy=(4.0, y),
+            text=data['goals for'][y],
+            ha='center'
+        )
+        ax.annotate(
+            xy=(4.5, y),
+            text=data['goals against'][y],
+            ha='center'
+        )
+        ax.annotate(
+            xy=(5.0, y),
             text=data['points'][y],
             ha='center'
         )
@@ -92,18 +106,30 @@ def create_table_png(data: dict):
     )
     ax.annotate(
         xy=(3.0, nrows),
-        text='G+',
+        text='D',
         weight='bold',
         ha='center'
     )
     ax.annotate(
         xy=(3.5, nrows),
-        text='G-',
+        text='L',
         weight='bold',
         ha='center'
     )
     ax.annotate(
         xy=(4.0, nrows),
+        text='G+',
+        weight='bold',
+        ha='center'
+    )
+    ax.annotate(
+        xy=(4.5, nrows),
+        text='G-',
+        weight='bold',
+        ha='center'
+    )
+    ax.annotate(
+        xy=(5.0, nrows),
         text='PTS',
         weight='bold',
         ha='center'
