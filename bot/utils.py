@@ -1,6 +1,6 @@
-import matplotlib.pyplot as plt
+import io
 
-from projects.epl_bot import settings
+import matplotlib.pyplot as plt
 
 
 def transform_table(raw_table: dict) -> dict:
@@ -135,17 +135,10 @@ def create_table_png(data: dict):
         ha='center'
     )
 
-    plt.savefig(
-        'point_table.png',
-        dpi=300,
-        transparent=True
-    )
+    plot_object = io.BytesIO()
+    plt.savefig(plot_object)
+    plot_object.seek(0)
+    plot_object.name = 'point_table.png'
+    plt.close()
 
-
-def main():
-    transformed_table = transform_table(settings.TABLE)
-    create_table_png(transformed_table)
-
-
-if __name__ == '__main__':
-    main()
+    return plot_object
