@@ -1,11 +1,9 @@
 import logging
 
+from epl_bot import settings
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, \
     filters
-
-from epl_bot import settings
-from utils import create_table_png, transform_table
 
 FORMAT = '%(asctime)s %(levelname)s %(message)s'
 logging.basicConfig(filename='bot.log', level=logging.INFO, format=FORMAT)
@@ -20,8 +18,9 @@ async def greet_user(update: Update, context):
 
 async def send_point_table(update: Update, context):
     await context.bot.send_photo(chat_id=update.effective_chat.id,
-                                 photo=create_table_png(
-                                     transform_table(settings.TABLE)))
+                                 photo=open(
+                                     f'{settings.SAVE_PNG_PATH}' + 'point_table.png',
+                                     'rb'))
 
 
 def main():
