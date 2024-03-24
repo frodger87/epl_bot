@@ -4,7 +4,7 @@ from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, \
     filters
 
-from projects.epl_bot import settings
+from epl_bot import settings
 from utils import create_table_png, transform_table
 
 FORMAT = '%(asctime)s %(levelname)s %(message)s'
