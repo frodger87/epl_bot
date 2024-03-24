@@ -1,6 +1,6 @@
 from db import db_session
 from models import PointTable
-from projects.epl_bot.parser.standings import get_league_standings
+from epl_bot.parser.standings import get_league_standings
 
 new_string = PointTable(data=get_league_standings(league=39, season=2023))
 
