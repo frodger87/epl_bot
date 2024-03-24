@@ -1,6 +1,6 @@
-import io
-
 import matplotlib.pyplot as plt
+from epl_bot import settings
+from epl_bot.parser.standings import get_league_standings
 
 
 def transform_table(raw_table: dict) -> dict:
@@ -135,10 +135,15 @@ def create_table_png(data: dict):
         ha='center'
     )
 
-    plot_object = io.BytesIO()
-    plt.savefig(plot_object)
-    plot_object.seek(0)
-    plot_object.name = 'point_table.png'
-    plt.close()
+    plt.savefig(
+        f'{settings.SAVE_PNG_PATH}' + 'point_table.png',
+        dpi=300,
+        transparent=True
+    )
 
-    return plot_object
+
+if __name__ == '__main__':
+    liague_id = 39,
+    season = 2023
+    raw_table = get_league_standings(liague_id, season)
+    create_table_png(transform_table(raw_table))
