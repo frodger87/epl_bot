@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from epl_bot import settings
-from epl_bot.parser.standings import get_league_standings
+from epl_bot.db_utils.db import db_session
+from epl_bot.db_utils.models import PointTable
 
 
 def transform_table(raw_table: dict) -> dict:
@@ -142,8 +143,21 @@ def create_table_png(data: dict):
     )
 
 
-if __name__ == '__main__':
-    liague_id = 39,
-    season = 2023
-    raw_table = get_league_standings(liague_id, season)
+def save_png_table():
+    raw_table = (
+        db_session
+        .query(PointTable)
+        .order_by(
+            PointTable
+            .create_date
+            .desc()
+        )
+        .limit(1)
+        .first()
+        .data
+    )
     create_table_png(transform_table(raw_table))
+
+
+if __name__ == '__main__':
+    save_png_table()

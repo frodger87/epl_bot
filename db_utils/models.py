@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer
 from sqlalchemy import DateTime, JSON
 from sqlalchemy.sql import func
 
-from db import Base, engine
+from epl_bot.db_utils.db import Base, engine
 
 
 class PointTable(Base):
