@@ -1,6 +1,7 @@
 settings.py
 venv/
 env/
+.env
 *.log
 *.ipynb
 __pycache__/
