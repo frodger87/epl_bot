@@ -2,7 +2,7 @@ import json
 
 import requests
 
-from projects.epl_bot import settings
+from epl_bot import settings
 
 
 def get_league_standings(league, season):
