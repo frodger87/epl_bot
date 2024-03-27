@@ -1,7 +1,6 @@
 import json
 
 import requests
-
 from epl_bot import settings
 
 
