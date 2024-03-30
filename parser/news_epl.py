@@ -1,19 +1,31 @@
 import requests
 from bs4 import BeautifulSoup
 
-url = 'http://fapl.ru/news/'
-response = requests.get(url)
-html_content = response.content.decode('cp1251')
 
-soup = BeautifulSoup(html_content, 'html.parser')
+def get_html(url):
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        html_content = response.content.decode('cp1251')
+        return html_content
+    except (requests.RequestException, ValueError):
+        print('Сетевая ошибка')
+        return False
 
-news_div = soup.find_all('div', class_='block news')
 
-dict_links = {}
-for news in news_div:
-    title = news.find('h3').text
-    link = news.find('a')['href']
-    full_link = f"http://fapl.ru{link}"
-    dict_links[title] = full_link
+def get_news(html):
+    soup = BeautifulSoup(html, 'html.parser')
+    all_news = soup.find_all('div', class_='block news')
+    news_title_with_link = {}
+    for news in all_news:
+        title = news.find('h3').text
+        link = news.find('a')['href']
+        full_link = f"http://fapl.ru{link}"
+        news_title_with_link[title] = full_link
 
-print(dict_links)
+    return news_title_with_link
+
+
+if __name__ == '__main__':
+    news_from_fapl = get_html('http://fapl.ru/news/')
+    print(get_news(news_from_fapl))
