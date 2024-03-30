@@ -30,7 +30,7 @@ def filtering_api_data(data, status):
             date_time = match["fixture"]["date"]
             home_team = match["teams"]["home"]["name"]
             away_team = match["teams"]["away"]["name"]
-            matches_dict[date_time] = f"{home_team} - {away_team}"
+            matches_dict[date_time[:-6]] = f"{home_team} - {away_team}"
     return matches_dict
 
 
