@@ -1,7 +1,9 @@
 import logging
 
 from epl_bot import settings
+from utils import get_header_list, get_last_value_from_db_table
 from telegram import Update, ReplyKeyboardMarkup
+from epl_bot.db_utils.models import NewsFeedTable
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, \
     filters
 
@@ -10,7 +12,7 @@ logging.basicConfig(filename='bot.log', level=logging.INFO, format=FORMAT)
 
 
 async def greet_user(update: Update, context):
-    my_keyboard = ReplyKeyboardMarkup([['Таблица']])
+    my_keyboard = ReplyKeyboardMarkup([['Таблица'], ['Новости']])
     await context.bot.send_message(chat_id=update.effective_chat.id,
                                    text='Привет! Я бот по Английской Премьер лиге',
                                    reply_markup=my_keyboard)
@@ -23,12 +25,21 @@ async def send_point_table(update: Update, context):
                                      'rb'))
 
 
+async def send_news_headers(update: Update, context):
+    await context.bot.send_message(chat_id=update.effective_chat.id,
+                                   text=get_header_list(
+                                       get_last_value_from_db_table(
+                                           NewsFeedTable)), parse_mode='html')
+
+
 def main():
     application = ApplicationBuilder().token(settings.BOT_API_KEY).build()
     start_handler = CommandHandler('start', greet_user)
     application.add_handler(start_handler)
     application.add_handler(
         MessageHandler(filters.Regex('^(Таблица)$'), send_point_table))
+    application.add_handler(
+        MessageHandler(filters.Regex('^(Новости)$'), send_news_headers))
 
     logging.info('Бот стартовал')
 
