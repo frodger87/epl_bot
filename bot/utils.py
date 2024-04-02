@@ -143,12 +143,12 @@ def create_table_png(data: dict):
     )
 
 
-def save_png_table():
-    raw_table = (
+def get_last_value_from_db_table(table_model):
+    return (
         db_session
-        .query(PointTable)
+        .query(table_model)
         .order_by(
-            PointTable
+            table_model
             .create_date
             .desc()
         )
@@ -156,7 +156,22 @@ def save_png_table():
         .first()
         .data
     )
+
+def save_png_table():
+    raw_table = (
+        get_last_value_from_db_table(PointTable)
+    )
     create_table_png(transform_table(raw_table))
+
+
+def string_to_hyperlink(string, link):
+    return f"<a href='{link}'>{string}</a>"
+
+
+def get_header_list(news_raw: dict):
+    return '\n\n'.join(
+        [string_to_hyperlink(string=k, link=v) for k, v in
+         news_raw.items()])
 
 
 if __name__ == '__main__':
