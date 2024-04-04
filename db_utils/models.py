@@ -18,5 +18,12 @@ class NewsFeedTable(Base):
     create_date = Column(DateTime(timezone=True), server_default=func.now())
 
 
+class FixturesTable(Base):
+    __tablename__ = 'fixtures'
+    id = Column(Integer, primary_key=True)
+    data = Column(JSON)
+    create_date = Column(DateTime(timezone=True), server_default=func.now())
+
+
 if __name__ == '__main__':
     Base.metadata.create_all(engine)
