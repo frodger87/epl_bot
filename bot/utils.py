@@ -1,10 +1,10 @@
 import matplotlib.pyplot as plt
 from epl_bot import settings
 from epl_bot.db_utils.db import db_session
-from epl_bot.db_utils.models import PointTable
+from epl_bot.db_utils.models import PointTable, FixturesTable
 
 
-def transform_table(raw_table: dict) -> dict:
+def transform_raw_point_table(raw_table: dict) -> dict:
     data_transformed = {}
     pos_list = [k for k, v in raw_table.items()]
     teams_lst = [v['name'] for k, v in raw_table.items()]
@@ -29,8 +29,17 @@ def transform_table(raw_table: dict) -> dict:
     return data_transformed
 
 
-def create_table_png(data: dict):
-    fig = plt.figure(figsize=(6, 6), dpi=200)
+def transform_raw_fixtures(raw_fixtures: dict) -> dict:
+    fixture_dict = {}
+    fixture_dict['date'] = [k.replace('T', ' ') for k, v in
+                            raw_fixtures.items()][::-1]
+    fixture_dict['fix'] = [v for k, v in raw_fixtures.items()][::-1]
+
+    return fixture_dict
+
+
+def create_point_table_png(data: dict):
+    fig = plt.figure(figsize=(6, 4), dpi=300)
     ax = plt.subplot(111)
 
     ncols = 5
@@ -143,6 +152,36 @@ def create_table_png(data: dict):
     )
 
 
+def create_fixtures_png(data: dict):
+    fig = plt.figure(figsize=(6, 6), dpi=250)
+    ax = plt.subplot(111)
+
+    ncols = 2
+    nrows = len(data['date'])
+
+    ax.set_xlim(0, ncols)
+    ax.set_ylim(0, nrows)
+    ax.set_axis_off()
+
+    for y in range(0, nrows):
+        ax.annotate(
+            xy=(0.0, y),
+            text=data['date'][y],
+            ha='left'
+        )
+        ax.annotate(
+            xy=(0.8, y),
+            text=data['fix'][y],
+            ha='left'
+        )
+
+    plt.savefig(
+        f'{settings.SAVE_PNG_PATH}' + 'fixtures.png',
+        dpi=300,
+        transparent=True
+    )
+
+
 def get_last_value_from_db_table(table_model):
     return (
         db_session
@@ -157,11 +196,19 @@ def get_last_value_from_db_table(table_model):
         .data
     )
 
-def save_png_table():
+
+def save_png_point_table():
     raw_table = (
         get_last_value_from_db_table(PointTable)
     )
-    create_table_png(transform_table(raw_table))
+    create_point_table_png(transform_raw_point_table(raw_table))
+
+
+def save_png_fixtures():
+    raw_table = (
+        get_last_value_from_db_table(FixturesTable)
+    )
+    create_fixtures_png(transform_raw_fixtures(raw_table))
 
 
 def string_to_hyperlink(string, link):
@@ -175,4 +222,4 @@ def get_header_list(news_raw: dict):
 
 
 if __name__ == '__main__':
-    save_png_table()
+    save_png_fixtures()

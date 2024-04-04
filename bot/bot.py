@@ -12,7 +12,7 @@ logging.basicConfig(filename='bot.log', level=logging.INFO, format=FORMAT)
 
 
 async def greet_user(update: Update, context):
-    my_keyboard = ReplyKeyboardMarkup([['Таблица'], ['Новости']])
+    my_keyboard = ReplyKeyboardMarkup([['Таблица'], ['Новости'], ['Расписание']])
     await context.bot.send_message(chat_id=update.effective_chat.id,
                                    text='Привет! Я бот по Английской Премьер лиге',
                                    reply_markup=my_keyboard)
@@ -31,6 +31,12 @@ async def send_news_headers(update: Update, context):
                                        get_last_value_from_db_table(
                                            NewsFeedTable)), parse_mode='html')
 
+async def send_fixtures(update: Update, context):
+    await context.bot.send_photo(chat_id=update.effective_chat.id,
+                                 photo=open(
+                                     f'{settings.SAVE_PNG_PATH}' + 'fixtures.png',
+                                     'rb'))
+
 
 def main():
     application = ApplicationBuilder().token(settings.BOT_API_KEY).build()
@@ -40,6 +46,8 @@ def main():
         MessageHandler(filters.Regex('^(Таблица)$'), send_point_table))
     application.add_handler(
         MessageHandler(filters.Regex('^(Новости)$'), send_news_headers))
+    application.add_handler(
+        MessageHandler(filters.Regex('^(Расписание)$'), send_fixtures))
 
     logging.info('Бот стартовал')
 
