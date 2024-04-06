@@ -41,16 +41,23 @@ async def send_fixtures(update: Update, context):
                                      'rb'))
 
 
+async def choose_favourite_team(update: Update, context):
+    await context.bot.send_message(chat_id=update.effective_chat.id,
+                                   text=f'Выбери команду из списка:\n{", ".join(settings.TEAMS)}'
+                                   )
+
+
 def main():
     application = ApplicationBuilder().token(settings.BOT_API_KEY).build()
-    start_handler = CommandHandler('start', greet_user)
-    application.add_handler(start_handler)
+    application.add_handler(CommandHandler('start', greet_user))
     application.add_handler(
         MessageHandler(filters.Regex('^(Таблица)$'), send_point_table))
     application.add_handler(
         MessageHandler(filters.Regex('^(Новости)$'), send_news_headers))
     application.add_handler(
         MessageHandler(filters.Regex('^(Ближайшие матчи)$'), send_fixtures))
+    application.add_handler(
+        MessageHandler(filters.Regex('^(Любимая команда)$'), choose_favourite_team))
 
     logging.info('Бот стартовал')
 
