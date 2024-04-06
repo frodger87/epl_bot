@@ -31,9 +31,13 @@ def transform_raw_point_table(raw_table: dict) -> dict:
 
 def transform_raw_fixtures(raw_fixtures: dict) -> dict:
     fixture_dict = {}
-    fixture_dict['date'] = [k.replace('T', ' ') for k, v in
-                            raw_fixtures.items()][::-1]
-    fixture_dict['fix'] = [v for k, v in raw_fixtures.items()][::-1]
+    if len(raw_fixtures) > 0:
+        fixture_dict['date'] = [k.replace('T', ' ') for k, v in
+                                raw_fixtures.items()][::-1]
+        fixture_dict['fix'] = [v for k, v in raw_fixtures.items()][::-1]
+    else:
+        fixture_dict['date'] = ['В ближайшую неделю матчей нет']
+        fixture_dict['fix'] = [' ']
 
     return fixture_dict
 
@@ -153,7 +157,8 @@ def create_point_table_png(data: dict):
 
 
 def create_fixtures_png(data: dict):
-    fig = plt.figure(figsize=(6, 6), dpi=250)
+    picture_height = len(data['date'])//2 + 1
+    fig = plt.figure(figsize=(6, picture_height), dpi=250)
     ax = plt.subplot(111)
 
     ncols = 2
@@ -167,12 +172,14 @@ def create_fixtures_png(data: dict):
         ax.annotate(
             xy=(0.0, y),
             text=data['date'][y],
-            ha='left'
+            ha='left',
+            fontsize=12
         )
         ax.annotate(
             xy=(0.8, y),
             text=data['fix'][y],
-            ha='left'
+            ha='left',
+            fontsize=12
         )
 
     plt.savefig(
