@@ -12,7 +12,7 @@ logging.basicConfig(filename='bot.log', level=logging.INFO, format=FORMAT)
 
 
 async def greet_user(update: Update, context):
-    my_keyboard = ReplyKeyboardMarkup([['Таблица'], ['Новости'], ['Расписание']])
+    my_keyboard = ReplyKeyboardMarkup([['Таблица'], ['Новости'], ['Ближайшие матчи'], ['Любимая команда']])
     await context.bot.send_message(chat_id=update.effective_chat.id,
                                    text='Привет! Я бот по Английской Премьер лиге',
                                    reply_markup=my_keyboard)
