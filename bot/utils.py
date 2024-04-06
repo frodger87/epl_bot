@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 from epl_bot import settings
 from epl_bot.db_utils.db import db_session
 from epl_bot.db_utils.models import PointTable, FixturesTable
+from datetime import datetime
 
 
 def transform_raw_point_table(raw_table: dict) -> dict:
@@ -32,8 +33,7 @@ def transform_raw_point_table(raw_table: dict) -> dict:
 def transform_raw_fixtures(raw_fixtures: dict) -> dict:
     fixture_dict = {}
     if len(raw_fixtures) > 0:
-        fixture_dict['date'] = [k.replace('T', ' ') for k, v in
-                                raw_fixtures.items()][::-1]
+        fixture_dict['date'] = [datetime.strptime(k, '%Y-%m-%dT%H:%M:%S').strftime('%d %B   %H:%M') for k, v in raw_fixtures.items()][::-1]
         fixture_dict['fix'] = [v for k, v in raw_fixtures.items()][::-1]
     else:
         fixture_dict['date'] = ['В ближайшую неделю матчей нет']
@@ -57,47 +57,54 @@ def create_point_table_png(data: dict):
         ax.annotate(
             xy=(0.0, y),
             text=data['pos'][y],
-            ha='left'
+            ha='left',
+            color='grey',
         )
         ax.annotate(
             xy=(1.0, y),
             text=data['teams'][y],
-            ha='center'
+            ha='center',
         )
         ax.annotate(
             xy=(2.0, y),
             text=data['played'][y],
-            ha='center'
+            ha='center',
+            color='grey',
         )
         ax.annotate(
             xy=(2.5, y),
             text=data['win'][y],
-            ha='center'
+            ha='center',
+            color='grey',
         )
         ax.annotate(
             xy=(3.0, y),
             text=data['draw'][y],
-            ha='center'
+            ha='center',
+            color='grey',
         )
         ax.annotate(
             xy=(3.5, y),
             text=data['lose'][y],
-            ha='center'
+            ha='center',
+            color='grey',
         )
         ax.annotate(
             xy=(4.0, y),
             text=data['goals for'][y],
-            ha='center'
+            ha='center',
+            color='grey',
         )
         ax.annotate(
             xy=(4.5, y),
             text=data['goals against'][y],
-            ha='center'
+            ha='center',
+            color='grey',
         )
         ax.annotate(
             xy=(5.0, y),
             text=data['points'][y],
-            ha='center'
+            ha='center',
         )
 
     ax.annotate(
@@ -173,7 +180,8 @@ def create_fixtures_png(data: dict):
             xy=(0.0, y),
             text=data['date'][y],
             ha='left',
-            fontsize=12
+            fontsize=12,
+            color='grey'
         )
         ax.annotate(
             xy=(0.8, y),
@@ -230,3 +238,4 @@ def get_header_list(news_raw: dict):
 
 if __name__ == '__main__':
     save_png_fixtures()
+    save_png_point_table()
