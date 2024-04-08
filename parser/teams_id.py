@@ -26,14 +26,15 @@ def teams_info(league, season):
     return raw_info_1
 
 
-def extracting_teams_id(data):
+def extracting_teams_id(league, season):
     team_id = {}
-    for team in data['response']:
+    raw_info = teams_info(league, season)
+    for team in raw_info['response']:
         team_id[team['team']['name']] = team['team']['id']
 
     return team_id
 
 
 if __name__ == '__main__':
-    teams_id = extracting_teams_id(teams_info(league=39, season=2023))
+    teams_id = extracting_teams_id(league=39, season=2023)
     print(teams_id)
