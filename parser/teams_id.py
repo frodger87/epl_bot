@@ -1,6 +1,7 @@
 import requests
 from epl_bot import settings
 
+
 """
 England     Premier League   39
 Spain       La Liga          140
