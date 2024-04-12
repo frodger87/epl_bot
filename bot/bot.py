@@ -1,10 +1,13 @@
 import logging
 
 from epl_bot import settings
-from epl_bot.db_utils.models import NewsFeedTable
-from telegram import Update, ReplyKeyboardMarkup
+from epl_bot.db_utils.db import db_session
+from epl_bot.db_utils.loader import get_or_create_user
+from epl_bot.db_utils.models import NewsFeedTable, User
+from sqlalchemy import update
+from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, \
-    filters
+    filters, ConversationHandler
 
 from utils import get_header_list, get_last_value_from_db_table
 
@@ -18,6 +21,7 @@ async def greet_user(update: Update, context):
     await context.bot.send_message(chat_id=update.effective_chat.id,
                                    text='Привет! Я бот по Английской Премьер лиге',
                                    reply_markup=my_keyboard)
+    await get_or_create_user(update.effective_user, update.message.chat.id)
 
 
 async def send_point_table(update: Update, context):
@@ -42,13 +46,48 @@ async def send_fixtures(update: Update, context):
 
 
 async def choose_favourite_team(update: Update, context):
-    await context.bot.send_message(chat_id=update.effective_chat.id,
-                                   text=f'Выбери команду из списка:\n{", ".join(settings.TEAMS)}'
-                                   )
+    favourite_team = db_session.query(User).where(
+        User.user_id == str(update.effective_user.id)).first().favourite_team
+    if favourite_team == None:
+        await  update.message.reply_text(
+            f'Выбери команду из списка:\n{", ".join(settings.TEAMS)}')
+        return "favourite_team"
+    else:
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text=f'Твоя любимая команда {favourite_team.capitalize()}'
+        )
+
+
+async def check_team_name(update: Update, context):
+    team_name = update.message.text
+    if team_name not in settings.TEAMS:
+        await update.message.reply_text(
+            f'Пожалуйста введите команду из списка: \n{", ".join(settings.TEAMS)}',
+        )
+        return "favourite_team"
+    else:
+        context.user_data["favourite_team"] = {"favourite_team": team_name}
+        await update.message.reply_text(
+            f'Твоя любимая команда {team_name}')
+        db_session.query(User).where(
+            User.user_id == str(update.effective_user.id)).update(
+            {'favourite_team': f'{team_name}'})
+        db_session.commit()
 
 
 def main():
     application = ApplicationBuilder().token(settings.BOT_API_KEY).build()
+
+    favourite_team = ConversationHandler(
+        entry_points=[MessageHandler(filters.Regex('^(Любимая команда)$'),
+                                     choose_favourite_team)],
+        states={
+            "favourite_team": [MessageHandler(filters.TEXT, check_team_name)]},
+        fallbacks=[]
+    )
+
+    application.add_handler(favourite_team)
     application.add_handler(CommandHandler('start', greet_user))
     application.add_handler(
         MessageHandler(filters.Regex('^(Таблица)$'), send_point_table))
@@ -56,8 +95,6 @@ def main():
         MessageHandler(filters.Regex('^(Новости)$'), send_news_headers))
     application.add_handler(
         MessageHandler(filters.Regex('^(Ближайшие матчи)$'), send_fixtures))
-    application.add_handler(
-        MessageHandler(filters.Regex('^(Любимая команда)$'), choose_favourite_team))
 
     logging.info('Бот стартовал')
 
