@@ -1,6 +1,5 @@
 from epl_bot.db_utils.db import Base, engine
-from sqlalchemy import Column, Integer
-from sqlalchemy import DateTime, JSON
+from sqlalchemy import Column, Integer, DateTime, JSON, String, Boolean
 from sqlalchemy.sql import func
 
 
@@ -22,6 +21,16 @@ class FixturesTable(Base):
     __tablename__ = 'fixtures'
     id = Column(Integer, primary_key=True)
     data = Column(JSON)
+    create_date = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class User(Base):
+    __tablename__ = 'user'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(String)
+    chat_id = Column(String)
+    favourite_team = Column(String)
+    subscribe = Column(Boolean)
     create_date = Column(DateTime(timezone=True), server_default=func.now())
 
 
