@@ -36,7 +36,7 @@ def transform_raw_fixtures(raw_fixtures: dict) -> dict:
     if len(raw_fixtures) > 0:
         fixture_dict['date'] = [datetime.strptime(k,
                                                   '%Y-%m-%dT%H:%M:%S').strftime(
-            '%d %B   %H:%M') for k, v in raw_fixtures.items()][::-1]
+            '%d %B   %H:%M') for k, v in sorted(raw_fixtures.items())][::-1]
         fixture_dict['fix'] = [v for k, v in raw_fixtures.items()][::-1]
     else:
         fixture_dict['date'] = ['В ближайшую неделю матчей нет']
