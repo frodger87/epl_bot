@@ -1,8 +1,9 @@
+from datetime import datetime
+
 import matplotlib.pyplot as plt
 from epl_bot import settings
 from epl_bot.db_utils.db import db_session
 from epl_bot.db_utils.models import PointTable, FixturesTable
-from datetime import datetime
 
 
 def transform_raw_point_table(raw_table: dict) -> dict:
@@ -33,7 +34,9 @@ def transform_raw_point_table(raw_table: dict) -> dict:
 def transform_raw_fixtures(raw_fixtures: dict) -> dict:
     fixture_dict = {}
     if len(raw_fixtures) > 0:
-        fixture_dict['date'] = [datetime.strptime(k, '%Y-%m-%dT%H:%M:%S').strftime('%d %B   %H:%M') for k, v in raw_fixtures.items()][::-1]
+        fixture_dict['date'] = [datetime.strptime(k,
+                                                  '%Y-%m-%dT%H:%M:%S').strftime(
+            '%d %B   %H:%M') for k, v in raw_fixtures.items()][::-1]
         fixture_dict['fix'] = [v for k, v in raw_fixtures.items()][::-1]
     else:
         fixture_dict['date'] = ['В ближайшую неделю матчей нет']
@@ -164,7 +167,7 @@ def create_point_table_png(data: dict):
 
 
 def create_fixtures_png(data: dict):
-    picture_height = len(data['date'])//2 + 1
+    picture_height = len(data['date']) // 2 + 1
     fig = plt.figure(figsize=(6, picture_height), dpi=250)
     ax = plt.subplot(111)
 
@@ -234,8 +237,3 @@ def get_header_list(news_raw: dict):
     return '\n\n'.join(
         [string_to_hyperlink(string=k, link=v) for k, v in
          news_raw.items()])
-
-
-if __name__ == '__main__':
-    save_png_fixtures()
-    save_png_point_table()
