@@ -70,6 +70,7 @@ async def check_team_name(update: Update, context):
             User.user_id == str(update.effective_user.id)).update(
             {'favourite_team': f'{team_name}'})
         db_session.commit()
+        return ConversationHandler.END
 
 
 async def skip_choosing_fav_team(update: Update, context):
