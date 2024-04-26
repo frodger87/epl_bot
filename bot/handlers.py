@@ -47,8 +47,10 @@ async def choose_favourite_team(update: Update, context):
         User.user_id == str(update.effective_user.id)).first().favourite_team
     if favourite_team == None:
         await  update.message.reply_text(
-            f'Выберите команду из списка\n(введите /skip что бы пропустить этот шаг)',
-            reply_markup=inline_keyboard
+            f'Выберите команду из списка\n(введите /skip что бы пропустить этот шаг)\nПомни❗\n' \
+            f'<i>«Можно сменить религию, машину, жену и все остальное, но не любимый футбольный клуб».</i> <b>Эрик Кантона</b>',
+            reply_markup=inline_keyboard,
+            parse_mode='HTML'
         )
 
         return "favourite_team"
